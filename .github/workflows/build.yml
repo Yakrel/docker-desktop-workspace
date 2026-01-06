@@ -51,10 +51,10 @@ jobs:
             "https://hub.docker.com/v2/repositories/${{ secrets.DOCKERHUB_USERNAME }}/desktop-workspace/tags/?page_size=100" \
             | jq -r '.results[] | select(.name != "latest") | .name' | sort -r)
 
-          # Keep the 3 most recent dated tags, delete older ones
+          # Keep the 5 most recent dated tags, delete older ones
           TAG_COUNT=$(echo "$TAGS" | wc -l)
-          if [ "$TAG_COUNT" -gt 3 ]; then
-            echo "$TAGS" | tail -n +4 | while read -r tag; do
+          if [ "$TAG_COUNT" -gt 5 ]; then
+            echo "$TAGS" | tail -n +6 | while read -r tag; do
               if [ -n "$tag" ]; then
                 echo "Deleting old tag: $tag"
                 curl -s -X DELETE \
