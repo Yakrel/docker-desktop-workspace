@@ -12,7 +12,7 @@ A containerized Linux desktop environment accessible via a web browser. It provi
   - Tint2 Panel
 
 ## 🐳 Docker Hub
-The image is published to: **[yakrel93/desktop-workspace](https://hub.docker.com/r/yakrel93/desktop-workspace)**
+The image is published to: **[ghcr.io/yakrel/docker-desktop-workspace](https://github.com/Yakrel/docker-desktop-workspace/pkgs/container/docker-desktop-workspace)**
 
 ## 🔄 Build Policy
 - **Schedule:** Builds run twice a week (Sunday & Wednesday at 02:00 UTC).
@@ -23,7 +23,7 @@ The image is published to: **[yakrel93/desktop-workspace](https://hub.docker.com
 ```yaml
 services:
   desktop:
-    image: yakrel93/desktop-workspace:latest
+    image: ghcr.io/yakrel/docker-desktop-workspace:latest
     ports:
       - "5800:3001"
     environment:
