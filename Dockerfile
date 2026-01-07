@@ -33,16 +33,12 @@ RUN \
     google-chrome-stable=${CHROME_VERSION} && \
   echo "**** install Obsidian dependencies ****" && \
   apt-get install -y --no-install-recommends \
-    chromium \
-    chromium-l10n \
     git \
     libgtk-3-bin \
     libatk1.0 \
     libatk-bridge2.0 \
     libnss3 \
-    thunar \
     adwaita-icon-theme \
-    python3-xdg \
     tint2 && \
   echo "**** install Obsidian ****" && \
   if [ -z ${OBSIDIAN_VERSION+x} ]; then \
@@ -56,13 +52,8 @@ RUN \
   ./obsidian.app --appimage-extract && \
   mv squashfs-root /opt/obsidian && \
   mkdir -p /usr/share/icons/hicolor/48x48/apps && \
-  echo "**** convert icons ****" && \
-  apt-get install -y --no-install-recommends librsvg2-bin && \
-  rsvg-convert -w 48 -h 48 \
-    /usr/share/icons/hicolor/scalable/apps/org.xfce.thunar.svg \
-    -o /usr/share/icons/hicolor/48x48/apps/thunar.png && \
-  apt-get purge -y librsvg2-bin && \
-  apt-get autoremove -y && \
+  echo "**** copy obsidian icon ****" && \
+  cp /opt/obsidian/obsidian.png /usr/share/icons/hicolor/48x48/apps/obsidian.png && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
