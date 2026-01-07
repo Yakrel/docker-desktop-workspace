@@ -1,14 +1,16 @@
 #!/bin/bash
 
 BIN=/usr/bin/google-chrome
+CONFIG_DIR="$HOME/.config/google-chrome"
 
 # Ensure config dir exists
-mkdir -p "$HOME/.config/google-chrome"
+mkdir -p "$CONFIG_DIR"
 
-# Cleanup
-if ! pgrep chrome > /dev/null;then
-  rm -f $HOME/.config/google-chrome/Singleton*
-fi
+# Aggressive cleanup of lock files (fixes "Chrome won't open" issue)
+rm -f "$CONFIG_DIR/SingletonLock" "$CONFIG_DIR/SingletonCookie" "$CONFIG_DIR/SingletonSocket" 2>/dev/null
+
+# Kill zombie chrome processes if any
+pkill -9 -f "chrome.*zombie" 2>/dev/null || true
 
 ${BIN} \
   --no-first-run \
@@ -17,6 +19,11 @@ ${BIN} \
   --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' \
   --start-maximized \
   --test-type \
-  --user-data-dir="$HOME/.config/google-chrome" \
+  --user-data-dir="$CONFIG_DIR" \
   --disable-dev-shm-usage \
-   "$@"
+  --disable-background-networking \
+  --disable-sync \
+  --enable-gpu-rasterization \
+  --enable-zero-copy \
+  --ignore-gpu-blocklist \
+  "$@"
