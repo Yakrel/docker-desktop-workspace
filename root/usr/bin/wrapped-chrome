@@ -22,7 +22,6 @@ ${BIN} \
   --user-data-dir="$CONFIG_DIR" \
   --disable-dev-shm-usage \
   --disable-background-networking \
-  --disable-sync \
   --enable-gpu-rasterization \
   --enable-zero-copy \
   --ignore-gpu-blocklist \
