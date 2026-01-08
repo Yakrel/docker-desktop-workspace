@@ -15,13 +15,12 @@ pkill -9 -f "chrome.*zombie" 2>/dev/null || true
 ${BIN} \
   --no-first-run \
   --no-sandbox \
+  --test-type \
   --password-store=basic \
   --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' \
   --start-maximized \
-  --test-type \
   --user-data-dir="$CONFIG_DIR" \
   --disable-dev-shm-usage \
-  --disable-background-networking \
   --enable-gpu-rasterization \
   --enable-zero-copy \
   --ignore-gpu-blocklist \
