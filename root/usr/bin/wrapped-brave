@@ -1,16 +1,13 @@
 #!/bin/bash
 
-BIN=/usr/bin/google-chrome
-CONFIG_DIR="$HOME/.config/google-chrome"
+BIN=/usr/bin/brave-browser
+CONFIG_DIR="$HOME/.config/BraveSoftware/Brave-Browser"
 
 # Ensure config dir exists
 mkdir -p "$CONFIG_DIR"
 
-# Aggressive cleanup of lock files (fixes "Chrome won't open" issue)
+# Aggressive cleanup of lock files
 rm -f "$CONFIG_DIR/SingletonLock" "$CONFIG_DIR/SingletonCookie" "$CONFIG_DIR/SingletonSocket" 2>/dev/null
-
-# Kill zombie chrome processes if any
-pkill -9 -f "chrome.*zombie" 2>/dev/null || true
 
 ${BIN} \
   --no-first-run \

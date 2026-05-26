@@ -6,7 +6,7 @@ A minimalist, containerized desktop environment designed for web browsing and no
 
 This image is strictly scoped to the following applications:
 
-- **Google Chrome:** Primary interface, optimized for container usage.
+- **Brave:** Primary browser, optimized for container usage.
 - **Obsidian:** Knowledge base and note-taking tool.
 - **Window Manager:** Openbox (Minimalist).
 - **Panel:** Tint2.
@@ -27,16 +27,16 @@ services:
     image: ghcr.io/yakrel/docker-desktop-workspace:latest
     container_name: desktop-workspace
     security_opt:
-      - seccomp:unconfined # Required for Chrome stability
+      - seccomp:unconfined # Required for browser stability
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Istanbul
       - TITLE=Desktop Workspace
     volumes:
-      - /path/to/local/config:/config # Persist Chrome profile and Obsidian vaults
+      - /path/to/local/config:/config # Persist Brave profile and Obsidian vaults
     ports:
-      - "3000:3000" # HTTPS Web Interface
+      - "3001:3001" # HTTPS Web Interface
     shm_size: "2gb" # Recommended to prevent browser crashes
     restart: unless-stopped
 ```
@@ -50,7 +50,7 @@ docker run -d \
   -e PUID=1000 \
   -e PGID=1000 \
   -e TZ=Europe/Istanbul \
-  -p 3000:3000 \
+  -p 3001:3001 \
   -v /path/to/local/config:/config \
   --shm-size="2gb" \
   --restart unless-stopped \
@@ -61,9 +61,9 @@ docker run -d \
 
 | Parameter | Description |
 | :--- | :--- |
-| **Port** | `3000` (HTTPS) is the default entry point. |
-| **Volumes** | `/config` stores user data (Chrome profile, Obsidian vaults, etc.). |
-| **Security** | `seccomp:unconfined` is explicitly required for Chrome to run without sandbox issues. |
+| **Port** | `3001` (HTTPS) is the default entry point. |
+| **Volumes** | `/config` stores user data (Brave profile, Obsidian vaults, etc.). |
+| **Security** | `seccomp:unconfined` is explicitly required for the browser to run without sandbox issues. |
 | **Shared Memory** | `--shm-size="2gb"` is highly recommended for modern web browsing sessions. |
 
 ## 🛠️ Build Info

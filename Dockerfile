@@ -5,7 +5,6 @@ FROM ghcr.io/linuxserver/baseimage-selkies:debiantrixie
 # set version label
 ARG BUILD_DATE
 ARG VERSION
-ARG CHROME_VERSION
 ARG OBSIDIAN_VERSION
 LABEL build_version="Desktop Workspace version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="Yakrel"
@@ -17,20 +16,18 @@ RUN \
   echo "**** add icon ****" && \
   curl -o \
     /usr/share/selkies/www/icon.png \
-    https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/chrome-logo.png && \
+    https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/brave-logo.png && \
   echo "**** setup repo ****" && \
-  curl -fsSL \
-    https://dl.google.com/linux/linux_signing_key.pub \
-    | gpg --dearmor | tee /usr/share/keyrings/google-chrome.gpg >/dev/null && \
-  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" >> \
-    /etc/apt/sources.list.d/google-chrome.list && \
+  curl -fsSLo \
+    /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+    https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
+  echo \
+    "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
+    > /etc/apt/sources.list.d/brave-browser-release.list && \
   echo "**** install packages ****" && \
-  if [ -z "${CHROME_VERSION+x}" ]; then \
-    CHROME_VERSION=$(curl -sX GET http://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -A 7 -m 1 'Package: google-chrome-stable' | awk -F ': ' '/Version/{print $2;exit}'); \
-  fi && \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-    google-chrome-stable=${CHROME_VERSION} && \
+    brave-browser && \
   echo "**** install Obsidian dependencies ****" && \
   apt-get install -y --no-install-recommends \
     git \
@@ -67,6 +64,6 @@ RUN \
 COPY /root /
 
 # ports and volumes
-EXPOSE 3000
+EXPOSE 3001
 
 VOLUME /config
