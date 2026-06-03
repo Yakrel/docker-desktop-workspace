@@ -24,6 +24,9 @@ RUN \
   echo \
     "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
     > /etc/apt/sources.list.d/brave-browser-release.list && \
+  echo "**** hold wayland packages to prevent ABI drift ****" && \
+  WAYLAND_PKGS=$(dpkg -l | grep -E '^ii' | grep -E "labwc|wayland|wlr" | awk '{print $2}' | tr '\n' ' ') && \
+  if [ -n "$WAYLAND_PKGS" ]; then apt-mark hold $WAYLAND_PKGS; fi && \
   echo "**** install packages ****" && \
   apt-get update && \
   apt-get install -y --no-install-recommends \
