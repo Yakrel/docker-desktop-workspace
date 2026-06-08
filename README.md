@@ -33,6 +33,7 @@ services:
       - PGID=1000
       - TZ=Europe/Istanbul
       - TITLE=Desktop Workspace
+      - KEYBOARD=tr # Optional: Keyboard layout (e.g., tr, us)
     volumes:
       - /path/to/local/config:/config # Persist Brave profile and Obsidian vaults
     ports:
@@ -50,6 +51,7 @@ docker run -d \
   -e PUID=1000 \
   -e PGID=1000 \
   -e TZ=Europe/Istanbul \
+  -e KEYBOARD=tr \
   -p 3001:3001 \
   -v /path/to/local/config:/config \
   --shm-size="2gb" \
@@ -65,6 +67,7 @@ docker run -d \
 | **Volumes** | `/config` stores user data (Brave profile, Obsidian vaults, etc.). |
 | **Security** | `seccomp:unconfined` is explicitly required for the browser to run without sandbox issues. |
 | **Shared Memory** | `--shm-size="2gb"` is highly recommended for modern web browsing sessions. |
+| **KEYBOARD** | Optional: Keyboard layout configuration (e.g., `tr` for Turkish, `us` for US). |
 
 ## 🛠️ Build Info
 

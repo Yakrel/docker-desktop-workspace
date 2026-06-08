@@ -9,6 +9,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Istanbul
+      - KEYBOARD=tr
       - TITLE=Desktop Workspace
       - CUSTOM_USER=${CUSTOM_USER:?User must be defined}
       - PASSWORD=${PASSWORD:?Password must be defined}
