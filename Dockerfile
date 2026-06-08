@@ -13,10 +13,6 @@ LABEL maintainer="Yakrel"
 ENV TITLE="Desktop Workspace"
 
 RUN \
-  echo "**** add icon ****" && \
-  curl -o \
-    /usr/share/selkies/www/icon.png \
-    https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/brave-logo.png && \
   echo "**** setup repo ****" && \
   curl -fsSLo \
     /usr/share/keyrings/brave-browser-archive-keyring.gpg \
@@ -30,7 +26,7 @@ RUN \
   echo "**** install packages ****" && \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-    brave-browser && \
+    brave-origin && \
   echo "**** install Obsidian dependencies ****" && \
   apt-get install -y --no-install-recommends \
     git \
@@ -54,6 +50,8 @@ RUN \
   mkdir -p /usr/share/icons/hicolor/48x48/apps && \
   echo "**** copy obsidian icon ****" && \
   cp /opt/obsidian/obsidian.png /usr/share/icons/hicolor/48x48/apps/obsidian.png && \
+  echo "**** copy selkies icon ****" && \
+  cp /usr/share/icons/hicolor/256x256/apps/brave-origin.png /usr/share/selkies/www/icon.png && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
