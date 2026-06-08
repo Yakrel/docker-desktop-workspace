@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BIN=/usr/bin/brave-browser
-CONFIG_DIR="$HOME/.config/BraveSoftware/Brave-Browser"
+BIN=/usr/bin/brave-origin
+CONFIG_DIR="$HOME/.config/BraveSoftware/Brave-Origin"
 
 # Ensure config dir exists
 mkdir -p "$CONFIG_DIR"
