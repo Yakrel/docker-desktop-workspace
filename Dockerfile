@@ -6,6 +6,7 @@ FROM ghcr.io/linuxserver/baseimage-selkies:debiantrixie
 ARG BUILD_DATE
 ARG VERSION
 ARG OBSIDIAN_VERSION
+ARG FUTO_NOTES_VERSION
 LABEL build_version="Desktop Workspace version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="Yakrel"
 
@@ -27,7 +28,7 @@ RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
     brave-origin && \
-  echo "**** install Obsidian dependencies ****" && \
+  echo "**** install Obsidian and FUTO Notes dependencies ****" && \
   apt-get install -y --no-install-recommends \
     git \
     libgtk-3-bin \
@@ -35,7 +36,9 @@ RUN \
     libatk-bridge2.0 \
     libnss3 \
     adwaita-icon-theme \
-    tint2 && \
+    tint2 \
+    jq \
+    libwebkit2gtk-4.1-0 && \
   echo "**** install Obsidian ****" && \
   if [ -z ${OBSIDIAN_VERSION+x} ]; then \
     OBSIDIAN_VERSION=$(curl -sX GET "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest"| awk '/tag_name/{print $4;exit}' FS='[""]'); \
@@ -50,6 +53,19 @@ RUN \
   mkdir -p /usr/share/icons/hicolor/48x48/apps && \
   echo "**** copy obsidian icon ****" && \
   cp /opt/obsidian/obsidian.png /usr/share/icons/hicolor/48x48/apps/obsidian.png && \
+  echo "**** install FUTO Notes ****" && \
+  if [ -z ${FUTO_NOTES_VERSION+x} ]; then \
+    FUTO_NOTES_URL=$(curl -s "https://gitlab.futo.org/api/v4/projects/futo-notes%2Ffuto-notes/releases" | jq -r '.[0].assets.links[] | select(.name | contains("AppImage")) | .url'); \
+  else \
+    FUTO_NOTES_URL=$(curl -s "https://gitlab.futo.org/api/v4/projects/futo-notes%2Ffuto-notes/releases/${FUTO_NOTES_VERSION}" | jq -r '.assets.links[] | select(.name | contains("AppImage")) | .url'); \
+  fi && \
+  curl -o /tmp/futo-notes.app -L "$FUTO_NOTES_URL" && \
+  chmod +x /tmp/futo-notes.app && \
+  ./futo-notes.app --appimage-extract && \
+  mv squashfs-root /opt/futo-notes && \
+  chmod -R 755 /opt/futo-notes && \
+  echo "**** copy futo notes icon ****" && \
+  (cp "/opt/futo-notes/FUTO Notes.png" /usr/share/icons/hicolor/48x48/apps/futo-notes.png || cp /opt/futo-notes/futo-notes-tauri.png /usr/share/icons/hicolor/48x48/apps/futo-notes.png) &&  \
   echo "**** copy selkies icon ****" && \
   cp /usr/share/icons/hicolor/256x256/apps/brave-origin.png /usr/share/selkies/www/icon.png && \
   echo "**** cleanup ****" && \

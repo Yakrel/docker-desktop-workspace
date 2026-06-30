@@ -3,5 +3,6 @@
 <menu id="root-menu" label="MENU">
 <item label="Brave" icon="/usr/share/icons/hicolor/48x48/apps/brave-origin.png"><action name="Execute"><command>/usr/bin/wrapped-brave</command></action></item>
 <item label="Obsidian" icon="/usr/share/icons/hicolor/48x48/apps/obsidian.png"><action name="Execute"><command>/usr/bin/obsidian</command></action></item>
+<item label="FUTO Notes" icon="/usr/share/icons/hicolor/48x48/apps/futo-notes.png"><action name="Execute"><command>/usr/bin/futo-notes</command></action></item>
 </menu>
 </openbox_menu>
