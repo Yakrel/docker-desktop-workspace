@@ -1,0 +1,7 @@
+#!/bin/bash
+
+BIN=/opt/futo-notes/AppRun
+
+${BIN} \
+  --no-sandbox \
+  "$@"
