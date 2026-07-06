@@ -6,7 +6,7 @@ FROM ghcr.io/linuxserver/baseimage-selkies:debiantrixie
 ARG BUILD_DATE
 ARG VERSION
 ARG OBSIDIAN_VERSION
-ARG FUTO_NOTES_VERSION
+ARG TASKS_VERSION
 LABEL build_version="Desktop Workspace version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="Yakrel"
 
@@ -39,6 +39,14 @@ RUN \
     tint2 \
     jq \
     libwebkit2gtk-4.1-0 && \
+  echo "**** install Tasks.org ****" && \
+  if [ -z ${TASKS_VERSION+x} ]; then \
+    TASKS_VERSION=$(curl -sX GET "https://api.github.com/repos/tasks/tasks/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]'); \
+  fi && \
+  wget "https://github.com/tasks/tasks/releases/download/${TASKS_VERSION}/tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
+  apt-get install -y "./tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
+  sed -i 's|Exec=/usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|Exec=env LIBGL_ALWAYS_SOFTWARE=1 /usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|' /usr/share/applications/org.tasks.desktop && \
+  rm "./tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
   echo "**** install Obsidian ****" && \
   if [ -z ${OBSIDIAN_VERSION+x} ]; then \
     OBSIDIAN_VERSION=$(curl -sX GET "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest"| awk '/tag_name/{print $4;exit}' FS='[""]'); \
@@ -53,19 +61,6 @@ RUN \
   mkdir -p /usr/share/icons/hicolor/48x48/apps && \
   echo "**** copy obsidian icon ****" && \
   cp /opt/obsidian/obsidian.png /usr/share/icons/hicolor/48x48/apps/obsidian.png && \
-  echo "**** install FUTO Notes ****" && \
-  if [ -z ${FUTO_NOTES_VERSION+x} ]; then \
-    FUTO_NOTES_URL=$(curl -s "https://gitlab.futo.org/api/v4/projects/futo-notes%2Ffuto-notes/releases" | jq -r '.[0].assets.links[] | select(.name | contains("AppImage")) | .url'); \
-  else \
-    FUTO_NOTES_URL=$(curl -s "https://gitlab.futo.org/api/v4/projects/futo-notes%2Ffuto-notes/releases/${FUTO_NOTES_VERSION}" | jq -r '.assets.links[] | select(.name | contains("AppImage")) | .url'); \
-  fi && \
-  curl -o /tmp/futo-notes.app -L "$FUTO_NOTES_URL" && \
-  chmod +x /tmp/futo-notes.app && \
-  ./futo-notes.app --appimage-extract && \
-  mv squashfs-root /opt/futo-notes && \
-  chmod -R 755 /opt/futo-notes && \
-  echo "**** copy futo notes icon ****" && \
-  (cp "/opt/futo-notes/FUTO Notes.png" /usr/share/icons/hicolor/48x48/apps/futo-notes.png || cp /opt/futo-notes/futo-notes-tauri.png /usr/share/icons/hicolor/48x48/apps/futo-notes.png) &&  \
   echo "**** copy selkies icon ****" && \
   cp /usr/share/icons/hicolor/256x256/apps/brave-origin.png /usr/share/selkies/www/icon.png && \
   echo "**** cleanup ****" && \
