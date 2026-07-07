@@ -8,6 +8,7 @@ This image is strictly scoped to the following applications:
 
 - **Brave:** Primary browser, optimized for container usage.
 - **Obsidian:** Knowledge base and note-taking tool.
+- **Tasks.org:** Task management and todo-list application.
 - **Window Manager:** Openbox (Minimalist).
 - **Panel:** Tint2.
 
@@ -26,6 +27,7 @@ services:
   desktop-workspace:
     image: ghcr.io/yakrel/docker-desktop-workspace:latest
     container_name: desktop-workspace
+    hostname: desktop-workspace
     security_opt:
       - seccomp:unconfined # Required for browser stability
     environment:
@@ -47,6 +49,7 @@ services:
 ```bash
 docker run -d \
   --name=desktop-workspace \
+  --hostname=desktop-workspace \
   --security-opt seccomp=unconfined \
   -e PUID=1000 \
   -e PGID=1000 \
@@ -64,6 +67,7 @@ docker run -d \
 | Parameter | Description |
 | :--- | :--- |
 | **Port** | `3001` (HTTPS) is the default entry point. |
+| **Hostname** | Setting a static hostname (e.g. `desktop-workspace`) prevents Brave/Chromium profile lock issues (`SingletonLock`) on container restarts. |
 | **Volumes** | `/config` stores user data (Brave profile, Obsidian vaults, etc.). |
 | **Security** | `seccomp:unconfined` is explicitly required for the browser to run without sandbox issues. |
 | **Shared Memory** | `--shm-size="2gb"` is highly recommended for modern web browsing sessions. |
