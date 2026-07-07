@@ -6,8 +6,20 @@ CONFIG_DIR="$HOME/.config/BraveSoftware/Brave-Origin"
 # Ensure config dir exists
 mkdir -p "$CONFIG_DIR"
 
-# Aggressive cleanup of lock files
-rm -f "$CONFIG_DIR/SingletonLock" "$CONFIG_DIR/SingletonCookie" "$CONFIG_DIR/SingletonSocket" 2>/dev/null
+# Safely clean up stale locks if not running
+if [ -L "$CONFIG_DIR/SingletonLock" ]; then
+  LOCK_VAL=$(readlink "$CONFIG_DIR/SingletonLock")
+  LOCK_PID=${LOCK_VAL##*-}
+  LOCK_HOST=${LOCK_VAL%-*}
+
+  if [ "$LOCK_HOST" = "$(hostname)" ] && [ -d "/proc/$LOCK_PID" ]; then
+    # Brave is running, do not touch the locks
+    true
+  else
+    # Lock is stale, clean it up
+    rm -f "$CONFIG_DIR/SingletonLock" "$CONFIG_DIR/SingletonCookie" "$CONFIG_DIR/SingletonSocket" 2>/dev/null
+  fi
+fi
 
 ${BIN} \
   --no-first-run \
