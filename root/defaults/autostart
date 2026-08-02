@@ -3,6 +3,8 @@ if [ "$(whoami)" != "abc" ]; then
     /opt/obsidian
 fi
 
+gnome-keyring-daemon --start --components=secrets
+
 if [ -n "$KEYBOARD" ]; then
   setxkbmap "$KEYBOARD" &
 fi
