@@ -31,10 +31,13 @@ RUN \
   echo "**** install Obsidian dependencies ****" && \
   apt-get install -y --no-install-recommends \
     git \
+    dbus-x11 \
+    gnome-keyring \
     libgtk-3-bin \
     libatk1.0 \
     libatk-bridge2.0 \
     libnss3 \
+    libsecret-1-0 \
     adwaita-icon-theme \
     tint2 \
     jq \
