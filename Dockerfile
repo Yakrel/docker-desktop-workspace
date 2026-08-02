@@ -28,7 +28,7 @@ RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
     brave-origin && \
-  echo "**** install Obsidian and FUTO Notes dependencies ****" && \
+  echo "**** install Obsidian dependencies ****" && \
   apt-get install -y --no-install-recommends \
     git \
     libgtk-3-bin \
@@ -40,13 +40,15 @@ RUN \
     jq \
     libwebkit2gtk-4.1-0 && \
   echo "**** install Tasks.org ****" && \
-  if [ -z ${TASKS_VERSION+x} ]; then \
-    TASKS_VERSION=$(curl -sX GET "https://api.github.com/repos/tasks/tasks/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]'); \
+  TASKS_RELEASE_API="https://api.github.com/repos/tasks/tasks/releases/latest" && \
+  if [ -n "${TASKS_VERSION:-}" ]; then \
+    TASKS_RELEASE_API="https://api.github.com/repos/tasks/tasks/releases/tags/${TASKS_VERSION}"; \
   fi && \
-  wget "https://github.com/tasks/tasks/releases/download/${TASKS_VERSION}/tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
-  apt-get install -y "./tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
+  TASKS_DEB_URL=$(curl -fsSL "$TASKS_RELEASE_API" | jq -er 'first(.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url)') && \
+  curl -fsSLo /tmp/tasks.deb "$TASKS_DEB_URL" && \
+  apt-get install -y /tmp/tasks.deb && \
   sed -i 's|Exec=/usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|Exec=env LIBGL_ALWAYS_SOFTWARE=1 /usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|' /usr/share/applications/org.tasks.desktop && \
-  rm "./tasksorg-llc-tasks-org_${TASKS_VERSION}_amd64.deb" && \
+  rm /tmp/tasks.deb && \
   echo "**** install Obsidian ****" && \
   if [ -z ${OBSIDIAN_VERSION+x} ]; then \
     OBSIDIAN_VERSION=$(curl -sX GET "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest"| awk '/tag_name/{print $4;exit}' FS='[""]'); \
