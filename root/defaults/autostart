@@ -1,8 +1,6 @@
 if [ "$(whoami)" != "abc" ]; then
   sudo lsiown -R $(id -u):$(id -u) \
     /opt/obsidian
-  sudo lsiown -R $(id -u):$(id -u) \
-    /opt/futo-notes
 fi
 
 if [ -n "$KEYBOARD" ]; then
