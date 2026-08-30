@@ -2,7 +2,13 @@
 
 BIN=/opt/obsidian/obsidian
 
+# Use native Wayland rendering when the Selkies Wayland compositor is active.
+if [[ -e /dev/dri/renderD128 ]] && pgrep labwc > /dev/null 2>&1; then
+  WAYLAND="--ozone-platform=wayland"
+fi
+
 ${BIN} \
   --no-sandbox \
   --password-store=gnome-libsecret \
+  ${WAYLAND} \
   "$@"
