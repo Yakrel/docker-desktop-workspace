@@ -21,6 +21,16 @@ if [ -L "$CONFIG_DIR/SingletonLock" ]; then
   fi
 fi
 
+# Use native Wayland rendering when the Selkies Wayland compositor is active.
+if [[ -e /dev/dri/renderD128 ]] && pgrep labwc > /dev/null 2>&1; then
+  WAYLAND="--ozone-platform=wayland"
+fi
+
+# Enable Chromium accessibility support for the optional Pelorus interface.
+if [[ "${PELORUS,,}" == "true" ]]; then
+  ACCESSIBILITY="--force-renderer-accessibility"
+fi
+
 ${BIN} \
   --no-first-run \
   --no-sandbox \
@@ -33,4 +43,6 @@ ${BIN} \
   --enable-gpu-rasterization \
   --enable-zero-copy \
   --ignore-gpu-blocklist \
+  ${WAYLAND} \
+  ${ACCESSIBILITY} \
   "$@"

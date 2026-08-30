@@ -1,6 +1,6 @@
 # Docker Desktop Workspace
 
-A minimalist, containerized desktop environment designed for web browsing and note-taking. Built on **Debian Trixie** and **Selkies-GStreamer** (WebRTC), accessible directly via a browser.
+A minimalist, containerized Wayland desktop designed for web browsing and note-taking. Built on **Debian Trixie**, **PixelFlux**, and **Labwc**, and accessible directly through a browser.
 
 ## 📦 Contents
 
@@ -9,8 +9,8 @@ This image is strictly scoped to the following applications:
 - **Brave:** Primary browser, optimized for container usage.
 - **Obsidian:** Knowledge base and note-taking tool.
 - **Tasks.org:** Task management and todo-list application.
-- **Window Manager:** Openbox (Minimalist).
-- **Panel:** Tint2.
+- **Window Manager:** Labwc (Wayland).
+- **Panel:** Selkies desktop panel.
 
 *Note: No file manager (e.g., Thunar) is installed by default.*
 
@@ -72,6 +72,7 @@ docker run -d \
 | **Security** | `seccomp:unconfined` is explicitly required for the browser to run without sandbox issues. |
 | **Shared Memory** | `--shm-size="2gb"` is highly recommended for modern web browsing sessions. |
 | **KEYBOARD** | Optional: Keyboard layout configuration (e.g., `tr` for Turkish, `us` for US). |
+| **GPU** | Optional: pass `/dev/dri` to enable hardware rendering and stream encoding; software rendering remains available. |
 
 ## 🛠️ Build Info
 

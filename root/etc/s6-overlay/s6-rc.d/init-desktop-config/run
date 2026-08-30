@@ -1,24 +1,14 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-# Copy tint2 config if not exists
-if [[ ! -f /config/.config/tint2/tint2rc ]]; then
-    mkdir -p /config/.config/tint2
-    cp /defaults/tint2rc /config/.config/tint2/tint2rc
-fi
+# Keep the Labwc desktop launchers aligned with this image.
+mkdir -p /config/.config/labwc
+cp /defaults/menu_wayland.xml /config/.config/labwc/menu.xml
+cp /defaults/autostart_wayland /config/.config/labwc/autostart
 
-# Keep the application menu aligned with this image.
-mkdir -p /config/.config/openbox
-cp /defaults/menu.xml /config/.config/openbox/menu.xml
-
-if [[ ! -f /config/.config/openbox/autostart ]]; then
-    mkdir -p /config/.config/openbox
-    cp /defaults/autostart /config/.config/openbox/autostart
-else
-    # Automatically add KEYBOARD layout support to existing autostart files if missing
-    if ! grep -q "setxkbmap" /config/.config/openbox/autostart; then
-        sed -i '/tint2/i if [ -n "$KEYBOARD" ]; then\n  setxkbmap "$KEYBOARD" &\nfi\n' /config/.config/openbox/autostart
-    fi
+# Preserve the existing KEYBOARD setting through Wayland's XKB interface.
+if [[ -n "${KEYBOARD:-}" ]]; then
+    printf '%s' "$KEYBOARD" > /run/s6/container_environment/XKB_DEFAULT_LAYOUT
 fi
 
 # permissions

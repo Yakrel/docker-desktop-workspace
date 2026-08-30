@@ -57,14 +57,14 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=inline
 
-      - name: Clean up old package versions
+      - name: Keep latest five package versions
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mapfile -t version_ids < <(
             gh api --paginate \
               "/users/${GITHUB_REPOSITORY_OWNER}/packages/container/docker-desktop-workspace/versions?per_page=100" \
-              --jq '.[] | select((.metadata.container.tags | length) == 0) | .id'
+              --jq '.[].id'
           )
           for version_id in "${version_ids[@]:5}"; do
             gh api --method DELETE \
