@@ -16,7 +16,7 @@ ENV TITLE="Desktop Workspace" \
     SELKIES_DESKTOP=true \
     NO_GAMEPAD=true
 
-RUN \
+RUN --mount=type=secret,id=github_token,env=GITHUB_TOKEN \
   echo "**** setup repo ****" && \
   curl -fsSLo \
     /usr/share/keyrings/brave-browser-archive-keyring.gpg \
@@ -47,7 +47,10 @@ RUN \
   if [ -n "${TASKS_VERSION:-}" ]; then \
     TASKS_RELEASE_API="https://api.github.com/repos/tasks/tasks/releases/tags/${TASKS_VERSION}"; \
   fi && \
-  TASKS_DEB_URL=$(curl -fsSL "$TASKS_RELEASE_API" | jq -er 'first(.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url)') && \
+  curl --fail-with-body -sS -H "${GITHUB_TOKEN:+Authorization: Bearer $GITHUB_TOKEN}" \
+    "$TASKS_RELEASE_API" -o /tmp/tasks-release.json \
+    || { cat /tmp/tasks-release.json >&2; exit 1; } && \
+  TASKS_DEB_URL=$(jq -er 'first(.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url)' /tmp/tasks-release.json) && \
   curl -fsSLo /tmp/tasks.deb "$TASKS_DEB_URL" && \
   apt-get install -y /tmp/tasks.deb && \
   sed -i 's|Exec=/usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|Exec=env LIBGL_ALWAYS_SOFTWARE=1 /usr/lib/tasksorg-llc/tasks-org/bin/tasks-org|' /usr/share/applications/org.tasks.desktop && \
@@ -57,7 +60,10 @@ RUN \
   if [ -n "${OBSIDIAN_VERSION:-}" ]; then \
     OBSIDIAN_RELEASE_API="https://api.github.com/repos/obsidianmd/obsidian-releases/releases/tags/${OBSIDIAN_VERSION}"; \
   fi && \
-  OBSIDIAN_APPIMAGE_URL=$(curl -fsSL "$OBSIDIAN_RELEASE_API" | jq -er 'first((if type == "array" then .[] else . end).assets[] | select((.name | endswith(".AppImage")) and (.name | contains("arm64") | not)) | .browser_download_url)') && \
+  curl --fail-with-body -sS -H "${GITHUB_TOKEN:+Authorization: Bearer $GITHUB_TOKEN}" \
+    "$OBSIDIAN_RELEASE_API" -o /tmp/obsidian-release.json \
+    || { cat /tmp/obsidian-release.json >&2; exit 1; } && \
+  OBSIDIAN_APPIMAGE_URL=$(jq -er 'first((if type == "array" then .[] else . end).assets[] | select((.name | endswith(".AppImage")) and (.name | contains("arm64") | not)) | .browser_download_url)' /tmp/obsidian-release.json) && \
   curl -fsSLo /tmp/obsidian.app "$OBSIDIAN_APPIMAGE_URL" && \
   SQUASHFS_OFFSET=$(grep -aob 'hsqs' /tmp/obsidian.app | tail -n1 | cut -d: -f1) && \
   unsquashfs -o "$SQUASHFS_OFFSET" -d squashfs-root /tmp/obsidian.app && \

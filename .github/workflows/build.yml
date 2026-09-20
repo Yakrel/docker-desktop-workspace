@@ -51,6 +51,8 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
